@@ -1,0 +1,55 @@
+body {
+    padding-top: 50px;
+}
+
+.selected {
+    background-color: lightgreen;
+}
+
+dialog {
+    min-height: 50%;
+    width: 80%;
+    border: 1px solid lightgrey;
+}
+
+dialog > button {
+    margin-left: 5px;
+}
+
+a.glyphicon {
+    text-decoration: none !important;
+    color: inherit !important;
+    font-size: 12px !important;
+    margin-right: 3px;
+}
+
+table.sources, table.apartments {
+    table-layout: fixed;
+}
+
+table.sources tr>th:nth-child(1) {
+    width: 15%;
+}
+
+table.sources tr>td:nth-child(2) {
+    word-break: break-all;
+}
+
+table.sources tr>th:nth-child(3) {
+    width: 11%;
+}
+
+tr.not-active {
+    opacity: 0.2;
+}
+
+span.caret {
+    margin-left: 5px;
+}
+
+li.btn-group > a.btn {
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}
