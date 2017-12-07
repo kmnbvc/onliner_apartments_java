@@ -9,18 +9,10 @@ class Sources extends React.Component {
     render() {
         return [
             <Menu key="menu">
-                <Toolbar/>
+                <SourceEdit onSave={() => location.reload()} className="btn btn-default navbar-btn pull-right">Add</SourceEdit>
             </Menu>,
             <SourcesTable key="sources"/>
         ];
-    }
-}
-
-class Toolbar extends React.Component {
-    render() {
-        return (
-            <SourceEdit onSave={() => location.reload()} className="btn btn-default navbar-btn pull-right">Add</SourceEdit>
-        );
     }
 }
 
@@ -54,9 +46,10 @@ class SourcesTable extends React.Component {
                 </td>
                 <td>
                     <div className="btn-group">
-                        <SourceEdit source={source} onSave={this.loadData} className="btn btn-default btn-sm">
+                        <SourceEdit source={source} onSave={this.loadData} className="btn btn-default btn-sm" title="Edit">
                             <span className="glyphicon glyphicon-pencil"></span>
                         </SourceEdit>
+                        <ToggleStateButton source={source}/>
                         <DeleteButton source={source} onClick={this.deleteSource}/>
                     </div>
                 </td>
@@ -78,6 +71,32 @@ class SourcesTable extends React.Component {
                 </table>
             </div>
         );
+    }
+}
+
+class ToggleStateButton extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {source: props.source};
+        this.toggleState = this.toggleState.bind(this);
+    }
+
+    toggleState() {
+        const source = Object.assign({}, this.state.source, {active: !this.state.source.active});
+        client({
+            method: 'PUT', path: source._links.self.href,
+            headers: { 'Content-Type': 'application/json' },
+            entity: source
+        }).then(() => this.setState({source}));
+    }
+
+    render() {
+        const source = this.state.source;
+        return (
+            <button onClick={this.toggleState} className="btn btn-default btn-sm" title={source.active ? 'Disable' : 'Enable'}>
+                <span className={"glyphicon " + (source.active ? "glyphicon-remove" : "glyphicon-ok")}></span>
+            </button>
+        )
     }
 }
 
