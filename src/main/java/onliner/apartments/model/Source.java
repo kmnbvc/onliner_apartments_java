@@ -1,17 +1,23 @@
 package onliner.apartments.model;
 
+import org.springframework.hateoas.Identifiable;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "sources")
-public class Source {
+public class Source implements Identifiable<String> {
 
     @Id
     private String name;
     private String url;
     private Boolean active = Boolean.TRUE;
+
+    public String getId() {
+        return name;
+    }
 
     public String getName() {
         return name;

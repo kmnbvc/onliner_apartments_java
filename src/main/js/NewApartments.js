@@ -13,8 +13,14 @@ class NewApartments extends React.Component {
     }
 
     componentDidMount() {
-        client({method: 'GET', path: '/api/apartments/new'})
-            .then(response => this.setState({apartments: response.entity._embedded.apartments}));
+        Promise.all([
+            client({method: 'GET', path: '/api/apartments/new'}).then(response => response.entity._embedded.apartments),
+            client({method: 'GET', path: '/api/sources'}).then(response => response.entity._embedded.sources)
+        ]).then(([apartments, sources]) => {
+            const sourcesMap = Object.assign(...sources.map(source => {return {[source._links.self.href]: source}}));
+            apartments.forEach(apartment => apartment.source = sourcesMap[apartment._links.source.href]);
+            this.setState({apartments});
+        })
     }
 
     render() {
@@ -22,7 +28,7 @@ class NewApartments extends React.Component {
             <Menu key="menu">
                 <ToolbarWithRouter apartments={this.state.apartments}/>
             </Menu>,
-            <ApartmentsTable key="apartments" apartments={this.state.apartments} showDetails={false}/>
+            <ApartmentsTable key="apartments" apartments={this.state.apartments} showDetails={false} header="New"/>
         ];
     }
 }
@@ -40,7 +46,7 @@ class Toolbar extends React.Component {
                 headers: {'Content-Type': 'application/json'},
                 entity: {items: this.props.apartments}
             }
-        ).then(() => history.push('/saved'));
+        ).then(() => history.push('/saved/active'));
     }
 
     render() {

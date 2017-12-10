@@ -15,7 +15,7 @@ class ApartmentsTable extends React.Component {
                           showDetails={this.props.showDetails}/>);
         return (
             <div>
-                <h3>Apartments list ({rows.length} items)</h3>
+                <Header items={rows.length} prefix={this.props.header}/>
                 <table className="table apartments">
                     <thead>
                     <tr>
@@ -35,6 +35,12 @@ class ApartmentsTable extends React.Component {
         )
     }
 }
+
+const Header = ({items, prefix = ''}) => {
+    const text = `${prefix} apartments (${items} items)`.trim().toLowerCase();
+    const capitalizedText = text[0].toUpperCase() + text.substring(1);
+    return <h3>{capitalizedText}</h3>;
+};
 
 class ApartmentRow extends React.Component {
     render() {

@@ -1,16 +1,19 @@
 package onliner.apartments.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import org.springframework.hateoas.Identifiable;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "apartments")
-public class Apartment {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Apartment implements Identifiable<Long> {
 
     //{"id":270771,"price":{"amount":"300.00","currency":"USD","converted":{"BYN":{"amount":"601.50","currency":"BYN"},"USD":{"amount":"300.00","currency":"USD"}}},"rent_type":"2_rooms","location":{"address":"\u041c\u0438\u043d\u0441\u043a, \u0443\u043b\u0438\u0446\u0430 \u0428\u0430\u0440\u0430\u043d\u0433\u043e\u0432\u0438\u0447\u0430, 60","user_address":"\u041c\u0438\u043d\u0441\u043a, \u0443\u043b\u0438\u0446\u0430 \u0428\u0430\u0440\u0430\u043d\u0433\u043e\u0432\u0438\u0447\u0430, 60","latitude":53.881855,"longitude":27.430285},"photo":"https:\/\/content.onliner.by\/apartment_rentals\/384755\/600x400\/b5a83dcf61d7e1e90ff8049a3da0f29d.jpeg","contact":{"owner":true},"created_at":"2017-11-01T23:54:00+0300","last_time_up":"2017-11-19T18:11:43+0300","up_available_in":79746,"url":"https:\/\/r.onliner.by\/ak\/apartments\/270771"}
 
@@ -32,10 +35,10 @@ public class Apartment {
     private String phone;
     private Boolean active = Boolean.TRUE;
     @ManyToOne
+    @NotNull
     private Source source;
     private Boolean ignored = Boolean.FALSE;
     private String note;
-    @JsonUnwrapped
     @Embedded
     private Contact contact;
     @ElementCollection

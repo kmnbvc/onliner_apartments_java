@@ -31,7 +31,7 @@ class Favorites extends React.Component {
             <Menu key="menu">
                 <Toolbar/>
             </Menu>,
-            <ApartmentsTable key="favorites" apartments={this.state.apartments} showDetails={true}/>
+            <ApartmentsTable key="favorites" apartments={this.state.apartments} showDetails={true} header="Favorites"/>
         ];
     }
 }

@@ -6,6 +6,13 @@ import javax.persistence.Embeddable;
 public class Contact {
     private Boolean owner = Boolean.FALSE;
 
+    public Contact() {
+    }
+
+    public Contact(Boolean owner) {
+        this.owner = owner;
+    }
+
     public Boolean getOwner() {
         return owner;
     }

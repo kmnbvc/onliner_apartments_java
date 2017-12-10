@@ -8,12 +8,31 @@ const client = require('./client');
 class SavedApartments extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {apartments: []};
+        this.state = {apartments: [], filter: this.props.match.params.filter};
         this.deleteAll = this.deleteAll.bind(this);
+        this.loadData = this.loadData.bind(this);
     }
 
     componentDidMount() {
-        client({method: 'GET', path: '/api/apartments'})
+        this.loadData();
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const {filter} = nextProps.match.params;
+        if (filter !== this.state.filter) {
+            this.setState({filter}, this.loadData);
+        }
+    }
+
+    loadData() {
+        const predefinedFiltersPaths = {
+            all: '/',
+            active: '/search/getActive',
+            ignored: '/search/getIgnored'
+        };
+        const filter = this.state.filter;
+        const path = predefinedFiltersPaths[filter] || `/search/find?filter=${filter}`;
+        client({method: 'GET', path: `/api/apartments/${path}`})
             .then(response => this.setState({apartments: response.entity._embedded.apartments}));
     }
 
@@ -27,7 +46,7 @@ class SavedApartments extends React.Component {
             <Menu key="menu">
                 <Toolbar apartments={this.state.apartments} delete={this.deleteAll}/>
             </Menu>,
-            <ApartmentsTable key="apartments" apartments={this.state.apartments} showDetails={true}/>
+            <ApartmentsTable key="apartments" apartments={this.state.apartments} showDetails={true} header={this.state.filter}/>
         ];
     }
 }

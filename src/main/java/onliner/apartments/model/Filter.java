@@ -1,11 +1,13 @@
 package onliner.apartments.model;
 
+import org.springframework.hateoas.Identifiable;
+
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Table(name = "filters")
-public class Filter {
+public class Filter implements Identifiable<String> {
 
     @Id
     private String name;
@@ -14,13 +16,17 @@ public class Filter {
     @ManyToOne
     private Source source;
     @Enumerated(EnumType.STRING)
-    private Active active;
+    private Active active = Active.ALL;
     @Enumerated(EnumType.STRING)
-    private Owner owner;
+    private Owner owner = Owner.ANY;
 
     public enum Active {ALL, ACTIVE_ONLY, INACTIVE_ONLY}
 
     public enum Owner {ANY, OWNER, NOT_OWNER}
+
+    public String getId() {
+        return name;
+    }
 
     public String getName() {
         return name;
