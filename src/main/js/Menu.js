@@ -22,7 +22,8 @@ class Menu extends React.Component {
     }
 
     highlightActive() {
-        // $(`nav li a[href='${decodeURIComponent(window.location.pathname)}']`).parents('li').addClass('active');
+        $('nav li.active').removeClass('active');
+        $(`nav li a[href='${decodeURIComponent(window.location.pathname)}']`).parents('li').addClass('active');
     }
 
     render() {
