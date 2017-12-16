@@ -2,6 +2,7 @@ target/
 built/
 !.mvn/wrapper/maven-wrapper.jar
 node_modules/
+npm-debug.log
 
 ### STS ###
 .apt_generated

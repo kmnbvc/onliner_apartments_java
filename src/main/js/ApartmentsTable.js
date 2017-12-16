@@ -6,13 +6,27 @@ class ApartmentsTable extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {selectedRow: {}};
+        this.selectRow = this.selectRow.bind(this);
+    }
+
+    selectRow(event) {
+        const selectedRow = event.target.parentElement;
+        this.toggleClass(this.state.selectedRow, 'selected');
+        this.toggleClass(selectedRow, 'selected');
+        this.setState({selectedRow});
+    }
+
+    toggleClass(element, className) {
+        if (element.classList) element.classList.toggle(className);
     }
 
     render() {
         const rows = this.props.apartments.map(apartment =>
             <ApartmentRow key={apartment.url}
                           apartment={apartment}
-                          showDetails={this.props.showDetails}/>);
+                          showDetails={this.props.showDetails}
+                          onClick={this.selectRow}/>);
         return (
             <div>
                 <Header items={rows.length} prefix={this.props.header}/>
@@ -46,7 +60,7 @@ class ApartmentRow extends React.Component {
     render() {
         const ap = this.props.apartment;
         return (
-            <tr>
+            <tr onClick={this.props.onClick}>
                 <td>
                     <a className="glyphicon glyphicon-star-empty" href="#"/>
                     <a className="glyphicon glyphicon-ban-circle" href="#"/>
