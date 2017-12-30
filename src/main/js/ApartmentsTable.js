@@ -1,24 +1,23 @@
 const React = require('react');
-
 const dateFormatter = require('./util/date-format');
+const client = require('./client');
 
 class ApartmentsTable extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {selectedRow: {}};
+        this.state = {selectedRow: null};
         this.selectRow = this.selectRow.bind(this);
     }
 
     selectRow(event) {
-        const selectedRow = event.target.parentElement;
-        this.toggleClass(this.state.selectedRow, 'selected');
-        this.toggleClass(selectedRow, 'selected');
+        const selectedRow = event.target.closest('tr');
+        this.toggleClass([this.state.selectedRow, selectedRow], 'selected');
         this.setState({selectedRow});
     }
 
-    toggleClass(element, className) {
-        if (element.classList) element.classList.toggle(className);
+    toggleClass(elements, className) {
+        elements.filter(element => !!element).forEach(element => element.classList.toggle(className));
     }
 
     render() {
@@ -57,13 +56,37 @@ const Header = ({items, prefix = ''}) => {
 };
 
 class ApartmentRow extends React.Component {
+    constructor(props) {
+        super(props);
+        this.toggleFavorite = this.toggleFavorite.bind(this);
+        this.toggleIgnored = this.toggleIgnored.bind(this);
+    }
+
+    toggleFavorite(event) {
+        event.preventDefault();
+        const apartment = this.props.apartment;
+        apartment.favorite = !apartment.favorite;
+        client({method: 'PUT', path: apartment._links.self.href,
+            headers: {'Content-Type': 'application/json'},
+            entity: apartment});
+    }
+
+    toggleIgnored(event) {
+        event.preventDefault();
+        const apartment = this.props.apartment;
+        apartment.ignored = !apartment.ignored;
+        client({method: 'PUT', path: apartment._links.self.href,
+            headers: {'Content-Type': 'application/json'},
+            entity: apartment});
+    }
+
     render() {
         const ap = this.props.apartment;
         return (
             <tr onClick={this.props.onClick}>
                 <td>
-                    <a className="glyphicon glyphicon-star-empty" href="#"/>
-                    <a className="glyphicon glyphicon-ban-circle" href="#"/>
+                    <a onClick={this.toggleFavorite} className={`glyphicon ${ap.favorite ? 'glyphicon-star' : 'glyphicon-star-empty'}`} href="#"/>
+                    <a onClick={this.toggleIgnored} className={`glyphicon ${ap.ignored ? 'glyphicon-ok' : 'glyphicon-ban-circle'}`} href="#"/>
                 </td>
                 <td>{ap.id}</td>
                 <td>{dateFormatter(ap.last_time_up)}</td>

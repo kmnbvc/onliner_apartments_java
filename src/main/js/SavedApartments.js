@@ -26,7 +26,7 @@ class SavedApartments extends React.Component {
 
     loadData() {
         const predefinedFiltersPaths = {
-            all: '/',
+            all: '/search/getAll',
             active: '/search/getActive',
             ignored: '/search/getIgnored'
         };
