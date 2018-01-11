@@ -11,6 +11,7 @@ class SavedApartments extends React.Component {
         this.state = {apartments: [], filter: this.props.match.params.filter};
         this.deleteAll = this.deleteAll.bind(this);
         this.loadData = this.loadData.bind(this);
+        this.loadDetails = this.loadDetails.bind(this);
     }
 
     componentDidMount() {
@@ -41,10 +42,31 @@ class SavedApartments extends React.Component {
             .then(() => this.setState({apartments: []}));
     }
 
+    loadDetails() {
+        const source = new EventSource('/api/apartments/details');
+
+        source.addEventListener('message', function (msg) {
+            console.log(msg);
+        }, false);
+
+        source.addEventListener('total', function (msg) {
+            console.log(msg);
+        }, false);
+
+        source.addEventListener('finish', function () {
+            console.log('closing source');
+            source.close();
+        }, false);
+
+        source.addEventListener('error', function (msg) {
+            console.log(msg);
+        }, false);
+    }
+
     render() {
         return [
             <Menu key="menu">
-                <Toolbar apartments={this.state.apartments} delete={this.deleteAll}/>
+                <Toolbar apartments={this.state.apartments} delete={this.deleteAll} loadDetails={this.loadDetails}/>
             </Menu>,
             <ApartmentsTable key="apartments" apartments={this.state.apartments} showDetails={true} header={this.state.filter}/>
         ];
@@ -55,7 +77,7 @@ class Toolbar extends React.Component {
     render() {
         return (
             <div className="navbar-form navbar-right btn-toolbar">
-                <button disabled={this.props.apartments.length === 0} className="btn btn-default">Load details</button>
+                <button onClick={this.props.loadDetails} disabled={this.props.apartments.length === 0} className="btn btn-default">Load details</button>
                 <button onClick={this.props.delete} disabled={this.props.apartments.length === 0} className="btn btn-default">Delete all</button>
             </div>
         );

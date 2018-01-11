@@ -2,36 +2,26 @@ package onliner.apartments.util;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ServiceUnavailableRetryStrategy;
-import org.apache.http.impl.client.AutoRetryHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HttpContext;
 
 import java.io.IOException;
 
 public class HttpUtil {
 
     static {
-        /*AutoRetryHttpClient client = new AutoRetryHttpClient(new DefaultHttpClient(), new ServiceUnavailableRetryStrategy() {
-            @Override
-            public boolean retryRequest(HttpResponse response, int executionCount, HttpContext context) {
-                return executionCount < 10;
-            }
-
-            @Override
-            public long getRetryInterval() {
-                return 500;
-            }
-        });
-        Unirest.setHttpClient(client);*/
         Unirest.setObjectMapper(new JacksonMapper());
         Unirest.setDefaultHeader("Accept", "application/json");
+    }
+
+    public static String get(String url) {
+        try {
+            return Unirest.get(url).asString().getBody();
+        } catch (UnirestException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static <T> T get(String url, Class<T> type) {

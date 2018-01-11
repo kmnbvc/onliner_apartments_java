@@ -174,6 +174,12 @@ public class Apartment implements Identifiable<Long> {
         this.images = images;
     }
 
+    public void setDetails(String text, String phone, List<String> images) {
+        this.text = text;
+        this.phone = phone;
+        this.images = images;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
