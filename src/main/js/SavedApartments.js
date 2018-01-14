@@ -11,7 +11,7 @@ class SavedApartments extends React.Component {
         this.state = {apartments: [], filter: this.props.match.params.filter};
         this.deleteAll = this.deleteAll.bind(this);
         this.loadData = this.loadData.bind(this);
-        this.loadDetails = this.loadDetails.bind(this);
+        this.updateDetails = this.updateDetails.bind(this);
     }
 
     componentDidMount() {
@@ -42,31 +42,18 @@ class SavedApartments extends React.Component {
             .then(() => this.setState({apartments: []}));
     }
 
-    loadDetails() {
-        const source = new EventSource('/api/apartments/details');
-
-        source.addEventListener('message', function (msg) {
-            console.log(msg);
-        }, false);
-
-        source.addEventListener('total', function (msg) {
-            console.log(msg);
-        }, false);
-
-        source.addEventListener('finish', function () {
-            console.log('closing source');
-            source.close();
-        }, false);
-
-        source.addEventListener('error', function (msg) {
-            console.log(msg);
-        }, false);
+    updateDetails(apartment) {
+        const apartments = [].concat(...this.state.apartments);
+        const id = apartments.findIndex(a => a.id === apartment.id);
+        if (id !== -1) {
+            this.setState({apartments: apartments.fill(apartment, id, id + 1)});
+        }
     }
 
     render() {
         return [
             <Menu key="menu">
-                <Toolbar apartments={this.state.apartments} delete={this.deleteAll} loadDetails={this.loadDetails}/>
+                <Toolbar apartments={this.state.apartments} delete={this.deleteAll} updateDetails={this.updateDetails}/>
             </Menu>,
             <ApartmentsTable key="apartments" apartments={this.state.apartments} showDetails={true} header={this.state.filter}/>
         ];
@@ -74,10 +61,41 @@ class SavedApartments extends React.Component {
 }
 
 class Toolbar extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {detailsLoadingCurrent: null, detailsLoadingTotal: null};
+        this.loadDetails = this.loadDetails.bind(this);
+    }
+
+    loadDetails() {
+        const source = new EventSource('/api/apartments/details');
+
+        source.addEventListener('message', (msg) => {
+            this.setState({detailsLoadingCurrent: this.state.detailsLoadingCurrent + 1});
+            const apartment = JSON.parse(msg.data);
+            this.props.updateDetails(apartment);
+        }, false);
+
+        source.addEventListener('total', (msg) => {
+            this.setState({detailsLoadingTotal: msg.data});
+        }, false);
+
+        source.addEventListener('finish', () => {
+            this.setState({detailsLoadingCurrent: null, detailsLoadingTotal: null});
+            source.close();
+        }, false);
+
+        source.addEventListener('error', (msg) => {
+            console.log(msg);
+        }, false);
+    }
+
     render() {
         return (
             <div className="navbar-form navbar-right btn-toolbar">
-                <button onClick={this.props.loadDetails} disabled={this.props.apartments.length === 0} className="btn btn-default">Load details</button>
+                <button onClick={this.loadDetails} disabled={this.props.apartments.length === 0} className="btn btn-default">
+                    {this.state.detailsLoadingTotal ? 'Loading: ' + this.state.detailsLoadingCurrent + '/' + this.state.detailsLoadingTotal : 'Load details'}
+                </button>
                 <button onClick={this.props.delete} disabled={this.props.apartments.length === 0} className="btn btn-default">Delete all</button>
             </div>
         );
