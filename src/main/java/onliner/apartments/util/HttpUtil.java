@@ -3,6 +3,7 @@ package onliner.apartments.util;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -16,9 +17,9 @@ public class HttpUtil {
         Unirest.setDefaultHeader("Accept", "application/json");
     }
 
-    public static String get(String url) {
+    public static HttpResponse<String> get(String url) {
         try {
-            return Unirest.get(url).asString().getBody();
+            return Unirest.get(url).asString();
         } catch (UnirestException e) {
             throw new RuntimeException(e);
         }

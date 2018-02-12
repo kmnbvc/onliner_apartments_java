@@ -1,14 +1,12 @@
 package onliner.apartments.model;
 
-import org.springframework.hateoas.Identifiable;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "sources")
-public class Source implements Identifiable<String> {
+public class Source {
 
     @Id
     private String name;

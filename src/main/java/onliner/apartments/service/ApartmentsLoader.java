@@ -1,5 +1,6 @@
 package onliner.apartments.service;
 
+import com.mashape.unirest.http.HttpResponse;
 import onliner.apartments.binding.PageData;
 import onliner.apartments.model.Apartment;
 import onliner.apartments.model.Source;
@@ -61,12 +62,16 @@ public class ApartmentsLoader {
 
     private CompletableFuture<Apartment> loadDetails(Apartment apartment) {
         return CompletableFuture.supplyAsync(() -> {
-            Document document = Jsoup.parse(HttpUtil.get(apartment.getUrl()));
-            //catch inactive
-            String text = document.getElementsByClass("apartment-info__sub-line_extended-bottom").text();
-            String phones = document.getElementsByClass("apartment-info__list_phones").text();
-            List<String> images = document.getElementsByClass("apartment-gallery__slide").eachAttr("data-thumb");
-            apartment.setDetails(text, phones, images);
+            HttpResponse<String> response = HttpUtil.get(apartment.getUrl());
+            if (response.getStatus() == 404) {
+                apartment.setActive(Boolean.FALSE);
+            } else {
+                Document document = Jsoup.parse(response.getBody());
+                String text = document.getElementsByClass("apartment-info__sub-line_extended-bottom").text();
+                String phones = document.getElementsByClass("apartment-info__list_phones").text();
+                List<String> images = document.getElementsByClass("apartment-gallery__slide").eachAttr("data-thumb");
+                apartment.setDetails(text, phones, images);
+            }
             return apartment;
         });
     }

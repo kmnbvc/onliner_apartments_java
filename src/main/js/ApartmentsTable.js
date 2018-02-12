@@ -83,7 +83,7 @@ class ApartmentRow extends React.Component {
     render() {
         const ap = this.props.apartment;
         return (
-            <tr onClick={this.props.onClick}>
+            <tr onClick={this.props.onClick} className={ap.active ? '' : 'not-active'}>
                 <td>
                     <a onClick={this.toggleFavorite} className={`glyphicon ${ap.favorite ? 'glyphicon-star' : 'glyphicon-star-empty'}`} href="#"/>
                     <a onClick={this.toggleIgnored} className={`glyphicon ${ap.ignored ? 'glyphicon-ok' : 'glyphicon-ban-circle'}`} href="#"/>

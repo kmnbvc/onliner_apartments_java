@@ -1,13 +1,11 @@
 package onliner.apartments.model;
 
-import org.springframework.hateoas.Identifiable;
-
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Table(name = "filters")
-public class Filter implements Identifiable<String> {
+public class Filter {
 
     @Id
     private String name;
