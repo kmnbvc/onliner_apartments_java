@@ -3,11 +3,11 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 const {BrowserRouter, Route, Switch, Redirect} = require('react-router-dom');
-const NewApartments = require('./NewApartments');
-const SavedApartments = require('./SavedApartments');
-const Favorites = require('./Favorites');
-const Sources = require('./Sources');
-const Filters = require('./Filters');
+const NewApartments = require('./apartments/NewApartments');
+const SavedApartments = require('./apartments/SavedApartments');
+const Favorites = require('./apartments/Favorites');
+const Sources = require('./sources/Sources');
+const Filters = require('./filters/Filters');
 
 class App extends React.Component {
     render() {

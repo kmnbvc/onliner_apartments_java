@@ -1,9 +1,9 @@
 'use strict';
 
 const React = require('react');
-const client = require('./client');
+const client = require('../client');
 const FilterEdit = require('./FilterEdit');
-const Menu = require('./Menu');
+const Menu = require('../Menu');
 
 class Filters extends React.Component {
     render() {

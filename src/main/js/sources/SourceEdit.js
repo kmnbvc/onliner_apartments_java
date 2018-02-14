@@ -2,7 +2,7 @@
 
 const React = require('react');
 const Modal = require('react-modal');
-const client = require('./client');
+const client = require('../client');
 
 class SourceEdit extends React.Component {
     constructor(props) {

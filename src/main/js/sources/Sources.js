@@ -1,8 +1,8 @@
 'use strict';
 
 const React = require('react');
-const client = require('./client');
-const Menu = require('./Menu');
+const client = require('../client');
+const Menu = require('../Menu');
 const SourceEdit = require('./SourceEdit');
 
 class Sources extends React.Component {

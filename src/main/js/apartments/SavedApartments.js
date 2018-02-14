@@ -2,8 +2,8 @@
 
 const React = require('react');
 const ApartmentsTable = require('./ApartmentsTable');
-const Menu = require('./Menu');
-const client = require('./client');
+const Menu = require('../Menu');
+const client = require('../client');
 
 class SavedApartments extends React.Component {
     constructor(props) {

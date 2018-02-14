@@ -1,6 +1,6 @@
 const React = require('react');
-const dateFormatter = require('./util/date-format');
-const client = require('./client');
+const dateFormatter = require('../util/date-format');
+const client = require('../client');
 
 class ApartmentsTable extends React.Component {
 

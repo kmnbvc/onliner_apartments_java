@@ -3,8 +3,8 @@
 const React = require('react');
 const {withRouter} = require('react-router-dom');
 const ApartmentsTable = require('./ApartmentsTable');
-const Menu = require('./Menu');
-const client = require('./client');
+const Menu = require('../Menu');
+const client = require('../client');
 
 class NewApartments extends React.Component {
     constructor(props) {
