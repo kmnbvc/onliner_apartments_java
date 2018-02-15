@@ -26,15 +26,9 @@ class SavedApartments extends React.Component {
     }
 
     loadData() {
-        const predefinedFiltersPaths = {
-            all: '/search/getAll',
-            active: '/search/getActive',
-            ignored: '/search/getIgnored'
-        };
         const filter = this.state.filter;
-        const path = predefinedFiltersPaths[filter] || `/search/find?filter=${filter}`;
-        client({method: 'GET', path: `/api/apartments/${path}`})
-            .then(response => this.setState({apartments: response.entity._embedded.apartments}));
+        client({method: 'GET', path: `/api/apartments/search/${filter}`})
+            .then(response => this.setState({apartments: response.entity}));
     }
 
     deleteAll() {
@@ -63,12 +57,12 @@ class SavedApartments extends React.Component {
 class Toolbar extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {detailsLoadingCurrent: null, detailsLoadingTotal: null};
+        this.state = {detailsLoadingCurrent: 0, detailsLoadingTotal: 0};
         this.loadDetails = this.loadDetails.bind(this);
     }
 
     loadDetails() {
-        const source = new EventSource('/api/apartments/details');
+        const source = new EventSource('/api/apartments/sse/details');
 
         source.addEventListener('message', (msg) => {
             this.setState({detailsLoadingCurrent: this.state.detailsLoadingCurrent + 1});
@@ -81,7 +75,7 @@ class Toolbar extends React.Component {
         }, false);
 
         source.addEventListener('finish', () => {
-            this.setState({detailsLoadingCurrent: null, detailsLoadingTotal: null});
+            this.setState({detailsLoadingCurrent: 0, detailsLoadingTotal: 0});
             source.close();
         }, false);
 

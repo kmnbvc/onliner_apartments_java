@@ -38,19 +38,11 @@ class FiltersTable extends React.Component {
 
     loadData() {
         client({method: 'GET', path: '/api/filters'})
-            .then(response => response.entity._embedded.filters)
-            .then(filters => filters.map(filter =>
-                client({method: 'GET', path: filter._links.source.href})
-                    .then(response => response.entity, err => {
-                    })
-                    .then(source => Object.assign(filter, {source}))
-            ))
-            .then(filters => Promise.all(filters))
-            .then(filters => this.setState({filters}));
+            .then(response => this.setState({filters: response.entity}));
     }
 
     deleteFilter(filter) {
-        client({method: 'DELETE', path: filter._links.self.href}).then(this.loadData);
+        client({method: 'DELETE', path: `/api/filters/${filter.name}`}).then(this.loadData);
     }
 
     render() {

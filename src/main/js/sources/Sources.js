@@ -30,11 +30,11 @@ class SourcesTable extends React.Component {
 
     loadData() {
         client({method: 'GET', path: '/api/sources'})
-            .then(response => this.setState({sources: response.entity._embedded.sources}));
+            .then(response => this.setState({sources: response.entity}));
     }
 
     deleteSource(source) {
-        client({method: 'DELETE', path: source._links.self.href}).then(this.loadData);
+        client({method: 'DELETE', path: `/api/sources/${source.name}`}).then(this.loadData);
     }
 
     render() {
@@ -84,7 +84,7 @@ class ToggleStateButton extends React.Component {
     toggleState() {
         const source = Object.assign({}, this.state.source, {active: !this.state.source.active});
         client({
-            method: 'PUT', path: source._links.self.href,
+            method: 'PUT', path: `/api/sources/${source.name}`,
             headers: { 'Content-Type': 'application/json' },
             entity: source
         }).then(() => this.setState({source}));

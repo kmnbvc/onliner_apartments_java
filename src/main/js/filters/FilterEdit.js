@@ -16,7 +16,7 @@ class FilterEdit extends React.Component {
 
     componentDidMount() {
         client({method: 'GET', path: '/api/sources'})
-            .then(response => this.setState({sources: response.entity._embedded.sources}));
+            .then(response => this.setState({sources: response.entity}));
     }
 
     componentWillReceiveProps(nextProps) {
@@ -43,6 +43,7 @@ class FilterEdit extends React.Component {
         const fields = [].concat(...event.target);
         const props = fields.filter(field => !!field.name).map(field => {return {[field.name]: field.value || null}});
         const filter = Object.assign({}, ...props);
+        filter.source = this.state.sources.find(source => source.name === filter.source);
         this.save(filter);
     }
 
@@ -65,26 +66,26 @@ class FilterEdit extends React.Component {
                     <div className="form-group">
                         <label htmlFor="active">Active</label>
                         <select defaultValue={filter.active} name="active" id="active" className="form-control">
-                            <option value="All">All</option>
-                            <option value="Active only">Active only</option>
-                            <option value="Inactive only">Inactive only</option>
+                            <option value="ALL">All</option>
+                            <option value="ACTIVE_ONLY">Active only</option>
+                            <option value="INACTIVE_ONLY">Inactive only</option>
                         </select>
                     </div>
                     <div className="form-group">
                         <label htmlFor="source">Source</label>
-                        <select defaultValue={filter.source ? filter.source._links.self.href : ''} name="source" id="source" className="form-control">
+                        <select defaultValue={filter.source ? filter.source.name : ''} name="source" id="source" className="form-control">
                             <option value="">None</option>
                             {
-                                this.state.sources.map(source => <option key={source.name} value={source._links.self.href}>{source.name}</option>)
+                                this.state.sources.map(source => <option key={source.name} value={source.name}>{source.name}</option>)
                             }
                         </select>
                     </div>
                     <div className="form-group">
                         <label htmlFor="owner">Owner</label>
                         <select defaultValue={filter.owner} name="owner" id="owner" className="form-control">
-                            <option value="Any">Any</option>
-                            <option value="Owner">Owner</option>
-                            <option value="Not owner">Not owner</option>
+                            <option value="ANY">Any</option>
+                            <option value="OWNER">Owner</option>
+                            <option value="NOT_OWNER">Not owner</option>
                         </select>
                     </div>
                     <div className="btn-toolbar">

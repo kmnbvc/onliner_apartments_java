@@ -22,8 +22,8 @@ class Favorites extends React.Component {
     }
 
     componentDidMount() {
-        client({method: 'GET', path: '/api/apartments/search/getFavorites'})
-            .then(response => this.setState({apartments: response.entity._embedded.apartments}));
+        client({method: 'GET', path: '/api/apartments/search/favorites'})
+            .then(response => this.setState({apartments: response.entity}));
     }
 
     render() {

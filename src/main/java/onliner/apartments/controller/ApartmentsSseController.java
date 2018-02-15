@@ -18,6 +18,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @RestController
+@RequestMapping("/api/apartments/sse")
 public class ApartmentsSseController {
 
     @Autowired
@@ -26,7 +27,7 @@ public class ApartmentsSseController {
     private ApartmentsRepository apartmentsRepository;
 
 
-    @RequestMapping(path = "/api/apartments/details", method = RequestMethod.GET)
+    @RequestMapping(path = "/details", method = RequestMethod.GET)
     public SseEmitter loadDetails() {
         SseEmitter emitter = new SseEmitter();
         List<Apartment> active = apartmentsRepository.getActive();

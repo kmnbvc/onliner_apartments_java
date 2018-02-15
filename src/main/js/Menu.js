@@ -13,8 +13,7 @@ class Menu extends React.Component {
     componentDidMount() {
         this.highlightActive();
         client({method: 'GET', path: '/api/filters'})
-            .then(response => response.entity._embedded.filters)
-            .then(filters => this.setState({filters}))
+            .then(response => this.setState({filters: response.entity}));
     }
 
     componentDidUpdate() {

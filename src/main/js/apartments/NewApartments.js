@@ -13,14 +13,7 @@ class NewApartments extends React.Component {
     }
 
     componentDidMount() {
-        Promise.all([
-            client({method: 'GET', path: '/api/apartments/new'}).then(response => response.entity._embedded.apartments),
-            client({method: 'GET', path: '/api/sources'}).then(response => response.entity._embedded.sources)
-        ]).then(([apartments, sources]) => {
-            const sourcesMap = Object.assign(...sources.map(source => {return {[source._links.self.href]: source}}));
-            apartments.forEach(apartment => apartment.source = sourcesMap[apartment._links.source.href]);
-            this.setState({apartments});
-        })
+        client({method: 'GET', path: '/api/apartments/new'}).then(response => this.setState({apartments: response.entity}));
     }
 
     render() {

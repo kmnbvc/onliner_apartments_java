@@ -66,7 +66,7 @@ class ApartmentRow extends React.Component {
         event.preventDefault();
         const apartment = this.props.apartment;
         apartment.favorite = !apartment.favorite;
-        client({method: 'PUT', path: apartment._links.self.href,
+        client({method: 'PUT', path: `/api/apartments/${apartment.id}`,
             headers: {'Content-Type': 'application/json'},
             entity: apartment});
     }
@@ -75,7 +75,7 @@ class ApartmentRow extends React.Component {
         event.preventDefault();
         const apartment = this.props.apartment;
         apartment.ignored = !apartment.ignored;
-        client({method: 'PUT', path: apartment._links.self.href,
+        client({method: 'PUT', path: `/api/apartments/${apartment.id}`,
             headers: {'Content-Type': 'application/json'},
             entity: apartment});
     }
