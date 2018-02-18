@@ -3,7 +3,7 @@
 const React = require('react');
 const ApartmentsTable = require('./ApartmentsTable');
 const Menu = require('../Menu');
-const client = require('../client');
+const {apartments: client} = require('../api/client_helper');
 
 class Favorites extends React.Component {
     constructor(props) {
@@ -22,8 +22,7 @@ class Favorites extends React.Component {
     }
 
     componentDidMount() {
-        client({method: 'GET', path: '/api/apartments/search/favorites'})
-            .then(response => this.setState({apartments: response.entity}));
+        client.getFavorites().then(response => this.setState({apartments: response.entity}));
     }
 
     render() {

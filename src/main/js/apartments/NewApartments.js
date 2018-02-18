@@ -4,7 +4,7 @@ const React = require('react');
 const {withRouter} = require('react-router-dom');
 const ApartmentsTable = require('./ApartmentsTable');
 const Menu = require('../Menu');
-const client = require('../client');
+const {apartments: client} = require('../api/client_helper');
 
 class NewApartments extends React.Component {
     constructor(props) {
@@ -13,7 +13,7 @@ class NewApartments extends React.Component {
     }
 
     componentDidMount() {
-        client({method: 'GET', path: '/api/apartments/new'}).then(response => this.setState({apartments: response.entity}));
+        client.getNew().then(response => this.setState({apartments: response.entity}));
     }
 
     render() {
@@ -34,12 +34,7 @@ class Toolbar extends React.Component {
 
     saveNew(event) {
         const {history} = this.props;
-        client({
-                method: 'POST', path: '/api/apartments/all',
-                headers: {'Content-Type': 'application/json'},
-                entity: {items: this.props.apartments}
-            }
-        ).then(() => history.push('/saved/active'));
+        client.createAll(this.props.apartments).then(() => history.push('/saved/active'));
     }
 
     render() {

@@ -1,7 +1,7 @@
 'use strict';
 
 const React = require('react');
-const client = require('../client');
+const {filters: client} = require('../api/client_helper');
 const FilterEdit = require('./FilterEdit');
 const Menu = require('../Menu');
 
@@ -37,12 +37,11 @@ class FiltersTable extends React.Component {
     }
 
     loadData() {
-        client({method: 'GET', path: '/api/filters'})
-            .then(response => this.setState({filters: response.entity}));
+        client.getAll().then(response => this.setState({filters: response.entity}));
     }
 
     deleteFilter(filter) {
-        client({method: 'DELETE', path: `/api/filters/${filter.name}`}).then(this.loadData);
+        client.remove(filter).then(this.loadData);
     }
 
     render() {

@@ -2,7 +2,7 @@
 
 const React = require('react');
 const Modal = require('react-modal');
-const client = require('../client');
+const {filters: client, sources: sources_client} = require('../api/client_helper');
 
 class FilterEdit extends React.Component {
     constructor(props) {
@@ -15,8 +15,7 @@ class FilterEdit extends React.Component {
     }
 
     componentDidMount() {
-        client({method: 'GET', path: '/api/sources'})
-            .then(response => this.setState({sources: response.entity}));
+        sources_client.getAll().then(response => this.setState({sources: response.entity}));
     }
 
     componentWillReceiveProps(nextProps) {
@@ -32,10 +31,7 @@ class FilterEdit extends React.Component {
     }
 
     save(filter) {
-        client({method: 'POST', path: '/api/filters',
-            headers: {'Content-Type': 'application/json'},
-            entity: filter
-        }).then(this.close).then(this.props.onSave);
+        client.create(filter).then(this.close).then(this.props.onSave);
     }
 
     handleSubmit(event) {

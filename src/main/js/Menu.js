@@ -2,7 +2,7 @@
 
 const React = require('react');
 const {NavLink} = require('react-router-dom');
-const client = require('./client');
+const {filters: filters_client} = require('./api/client_helper');
 
 class Menu extends React.Component {
     constructor(props) {
@@ -12,8 +12,7 @@ class Menu extends React.Component {
 
     componentDidMount() {
         this.highlightActive();
-        client({method: 'GET', path: '/api/filters'})
-            .then(response => this.setState({filters: response.entity}));
+        filters_client.getAll().then(response => this.setState({filters: response.entity}));
     }
 
     componentDidUpdate() {

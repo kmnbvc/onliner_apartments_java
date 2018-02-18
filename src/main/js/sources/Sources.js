@@ -1,7 +1,7 @@
 'use strict';
 
 const React = require('react');
-const client = require('../client');
+const {sources: client} = require('../api/client_helper');
 const Menu = require('../Menu');
 const SourceEdit = require('./SourceEdit');
 
@@ -29,12 +29,11 @@ class SourcesTable extends React.Component {
     }
 
     loadData() {
-        client({method: 'GET', path: '/api/sources'})
-            .then(response => this.setState({sources: response.entity}));
+        client.getAll().then(response => this.setState({sources: response.entity}));
     }
 
     deleteSource(source) {
-        client({method: 'DELETE', path: `/api/sources/${source.name}`}).then(this.loadData);
+        client.remove(source).then(this.loadData);
     }
 
     render() {
@@ -83,11 +82,7 @@ class ToggleStateButton extends React.Component {
 
     toggleState() {
         const source = Object.assign({}, this.state.source, {active: !this.state.source.active});
-        client({
-            method: 'PUT', path: `/api/sources/${source.name}`,
-            headers: { 'Content-Type': 'application/json' },
-            entity: source
-        }).then(() => this.setState({source}));
+        client.update(source).then(() => this.setState({source}));
     }
 
     render() {

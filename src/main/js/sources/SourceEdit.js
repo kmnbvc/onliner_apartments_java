@@ -2,7 +2,7 @@
 
 const React = require('react');
 const Modal = require('react-modal');
-const client = require('../client');
+const {sources: client} = require('../api/client_helper');
 
 class SourceEdit extends React.Component {
     constructor(props) {
@@ -27,10 +27,7 @@ class SourceEdit extends React.Component {
     }
 
     save(source) {
-        client({method: 'POST', path: '/api/sources',
-            headers: {'Content-Type': 'application/json'},
-            entity: source
-        }).then(this.close).then(this.props.onSave);
+        client.create(source).then(this.close).then(this.props.onSave);
     }
 
     handleSubmit(event) {

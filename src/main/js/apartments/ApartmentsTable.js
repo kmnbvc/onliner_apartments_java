@@ -1,6 +1,6 @@
 const React = require('react');
 const dateFormatter = require('../util/date-format');
-const client = require('../client');
+const {apartments: client} = require('../api/client_helper');
 
 class ApartmentsTable extends React.Component {
 
@@ -66,18 +66,14 @@ class ApartmentRow extends React.Component {
         event.preventDefault();
         const apartment = this.props.apartment;
         apartment.favorite = !apartment.favorite;
-        client({method: 'PUT', path: `/api/apartments/${apartment.id}`,
-            headers: {'Content-Type': 'application/json'},
-            entity: apartment});
+        client.update(apartment);
     }
 
     toggleIgnored(event) {
         event.preventDefault();
         const apartment = this.props.apartment;
         apartment.ignored = !apartment.ignored;
-        client({method: 'PUT', path: `/api/apartments/${apartment.id}`,
-            headers: {'Content-Type': 'application/json'},
-            entity: apartment});
+        client.update(apartment);
     }
 
     render() {

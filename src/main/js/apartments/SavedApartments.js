@@ -3,7 +3,7 @@
 const React = require('react');
 const ApartmentsTable = require('./ApartmentsTable');
 const Menu = require('../Menu');
-const client = require('../client');
+const {apartments: client} = require('../api/client_helper');
 
 class SavedApartments extends React.Component {
     constructor(props) {
@@ -27,13 +27,11 @@ class SavedApartments extends React.Component {
 
     loadData() {
         const filter = this.state.filter;
-        client({method: 'GET', path: `/api/apartments/search/${filter}`})
-            .then(response => this.setState({apartments: response.entity}));
+        client.search(filter).then(response => this.setState({apartments: response.entity}));
     }
 
     deleteAll() {
-        client({method: 'DELETE', path: '/api/apartments/all'})
-            .then(() => this.setState({apartments: []}));
+        client.removeAll().then(() => this.setState({apartments: []}));
     }
 
     updateDetails(apartment) {
