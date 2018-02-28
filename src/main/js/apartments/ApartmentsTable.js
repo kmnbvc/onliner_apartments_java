@@ -1,6 +1,8 @@
 const React = require('react');
 const dateFormatter = require('../util/date-format');
 const {apartments: client} = require('../api/client_helper');
+const Modal = require('react-modal');
+const {Map, TileLayer, Marker} = require('react-leaflet');
 
 class ApartmentsTable extends React.Component {
 
@@ -88,13 +90,45 @@ class ApartmentRow extends React.Component {
                 <td>{dateFormatter(ap.last_time_up)}</td>
                 <td>{ap.price.amount + ' ' + ap.price.currency}</td>
                 <td>{ap.rent_type}</td>
-                <td>{ap.location.address}</td>
+                <td><LocationLink apartment={ap}/></td>
                 {this.props.showDetails ? <td>{ap.text}</td> : null}
                 <td>
                     <a href={ap.url} target="_blank">Open</a>
                 </td>
             </tr>
         )
+    }
+}
+
+class LocationLink extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {isOpen: false, apartment: this.props.apartment};
+        this.open = this.open.bind(this);
+        this.close = this.close.bind(this);
+    }
+
+    open() {
+        this.setState({isOpen: true})
+    }
+
+    close() {
+        this.setState({isOpen: false});
+    }
+
+    render() {
+        const ap = this.state.apartment;
+        const position = [ap.location.latitude, ap.location.longitude];
+        return [
+            <a key={ap.id + '_location_link'} onClick={this.open} href='#'>{ap.location.address}</a>,
+            <Modal key={ap.id + '_location_popup'} isOpen={this.state.isOpen} onRequestClose={this.close}>
+                <Map center={position} zoom={13}>
+                    <TileLayer attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+                    <Marker position={position}/>
+                </Map>
+            </Modal>
+        ]
     }
 }
 

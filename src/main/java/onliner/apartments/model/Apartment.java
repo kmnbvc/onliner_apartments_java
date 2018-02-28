@@ -21,7 +21,7 @@ public class Apartment {
     private String url;
     @Embedded
     private Price price;
-    @Embedded
+    @OneToOne(cascade = CascadeType.ALL)
     private Location location;
     @JsonProperty("rent_type")
     private String type;

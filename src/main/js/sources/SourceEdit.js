@@ -44,7 +44,7 @@ class SourceEdit extends React.Component {
             <button key={source.name + '_edit'} onClick={this.edit} title={this.props.title} className={this.props.className}>
                 {this.props.children}
             </button>,
-            <Modal key={source.name + '_popup'} isOpen={this.state.isOpen} style={{overlay: {zIndex: 9999}}}>
+            <Modal key={source.name + '_popup'} isOpen={this.state.isOpen}>
                 <form onSubmit={this.handleSubmit}>
                     <div className="form-group">
                         <label htmlFor="name">Название</label>

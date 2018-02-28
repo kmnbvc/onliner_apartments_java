@@ -27,15 +27,15 @@ table.sources, table.apartments {
     table-layout: fixed;
 }
 
-table.sources tr>th:nth-child(1) {
+table.sources tr > th:nth-child(1) {
     width: 15%;
 }
 
-table.sources tr>td:nth-child(2) {
+table.sources tr > td:nth-child(2) {
     word-break: break-all;
 }
 
-table.sources tr>th:nth-child(3) {
+table.sources tr > th:nth-child(3) {
     width: 11%;
 }
 
@@ -52,4 +52,14 @@ li.btn-group > a.btn {
     border: none;
     box-shadow: none;
     -webkit-box-shadow: none;
+}
+
+.leaflet-container {
+    height: 100%;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.ReactModal__Overlay {
+    z-index: 9999;
 }
