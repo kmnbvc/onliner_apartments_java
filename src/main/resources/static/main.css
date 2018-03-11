@@ -63,3 +63,33 @@ li.btn-group > a.btn {
 .ReactModal__Overlay {
     z-index: 9999;
 }
+
+.glyphicon-refresh-animate {
+    -animation: spin .7s infinite linear;
+    -webkit-animation: spin2 .7s infinite linear;
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
+}
+
+.spinner {
+    border: 1px solid gray;
+    border-radius: 3px;
+    width: 100px;
+    padding: 3px;
+    background-color: beige;
+}
+
+.spinner-container {
+    position: fixed;
+    top: 65px;
+    left: 40%;
+    z-index: 3333;
+}
