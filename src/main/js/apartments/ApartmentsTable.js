@@ -3,6 +3,7 @@ const dateFormatter = require('../util/date-format');
 const {apartments: client} = require('../api/client_helper');
 const Modal = require('react-modal');
 const {Map, TileLayer, Marker} = require('react-leaflet');
+const Lightbox = require('react-images').default;
 
 class ApartmentsTable extends React.Component {
 
@@ -36,12 +37,12 @@ class ApartmentsTable extends React.Component {
                     <tr>
                         <th width="4%"></th>
                         <th width="6%">ID</th>
-                        <th width="13%">Updated</th>
+                        <th width="14%">Updated</th>
                         <th width="7%">Price</th>
                         <th width="6%">Type</th>
-                        <th width="15%">Address</th>
-                        {this.props.showDetails ? <th width="44%">Text</th> : null}
-                        <th width="5%">URL</th>
+                        <th width="16%">Address</th>
+                        {this.props.showDetails ? <th width="40%">Text</th> : null}
+                        {this.props.showDetails ? <th width="5%">Images</th> : null}
                     </tr>
                     </thead>
                     <tbody>{rows}</tbody>
@@ -86,17 +87,65 @@ class ApartmentRow extends React.Component {
                     <a onClick={this.toggleFavorite} className={`glyphicon ${ap.favorite ? 'glyphicon-star' : 'glyphicon-star-empty'}`} href="#"/>
                     <a onClick={this.toggleIgnored} className={`glyphicon ${ap.ignored ? 'glyphicon-ok' : 'glyphicon-ban-circle'}`} href="#"/>
                 </td>
-                <td>{ap.id}</td>
+                <td><a href={ap.url} target="_blank">{ap.id}</a></td>
                 <td>{dateFormatter(ap.last_time_up)}</td>
                 <td>{ap.price.amount + ' ' + ap.price.currency}</td>
                 <td>{ap.rent_type}</td>
                 <td><LocationLink apartment={ap}/></td>
                 {this.props.showDetails ? <td>{ap.text}</td> : null}
-                <td>
-                    <a href={ap.url} target="_blank">Open</a>
-                </td>
+                {this.props.showDetails ? <td><PhotosViewer apartment={ap}/></td> : null}
             </tr>
         )
+    }
+}
+
+class PhotosViewer extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {isOpen: false, currentImage: 0, apartment: this.props.apartment};
+        this.open = this.open.bind(this);
+        this.close = this.close.bind(this);
+        this.showNext = this.showNext.bind(this);
+        this.showPrev = this.showPrev.bind(this);
+        this.gotoImage = this.gotoImage.bind(this);
+    }
+
+    open(e) {
+        e.preventDefault();
+        this.setState({isOpen: true})
+    }
+
+    close() {
+        this.setState({isOpen: false, currentImage: 0});
+    }
+
+    showNext() {
+        this.setState({currentImage: this.state.currentImage + 1});
+    }
+
+    showPrev() {
+        this.setState({currentImage: this.state.currentImage - 1});
+    }
+
+    gotoImage(index) {
+        this.setState({currentImage: index});
+    }
+
+    render() {
+        const ap = this.state.apartment;
+        const images = ap.images.map(img => {return {src: img}});
+        return [
+            <a key={ap.id + '_photos_gallery_link'} onClick={this.open} href='#'>Show</a>,
+            <Lightbox key={ap.id + '_photos_gallery'} isOpen={this.state.isOpen}
+                      images={images}
+                      showThumbnails={true}
+                      onClose={this.close}
+                      currentImage={this.state.currentImage}
+                      onClickNext={this.showNext}
+                      onClickPrev={this.showPrev}
+                      onClickThumbnail={this.gotoImage}
+                      preventScroll={false}/>
+        ]
     }
 }
 
