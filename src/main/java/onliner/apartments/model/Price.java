@@ -17,10 +17,6 @@ public class Price {
     @JsonIgnore
     private Map<Currency, Price> converted = new HashMap<>();
 
-    public enum Currency {
-        BYN, USD
-    }
-
     public Double getAmount() {
         return amount;
     }

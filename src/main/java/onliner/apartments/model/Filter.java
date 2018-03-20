@@ -22,10 +22,6 @@ public class Filter {
 
     public enum Owner {ANY, OWNER, NOT_OWNER}
 
-    public String getId() {
-        return name;
-    }
-
     public String getName() {
         return name;
     }

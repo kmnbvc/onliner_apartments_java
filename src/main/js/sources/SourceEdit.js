@@ -3,19 +3,23 @@
 const React = require('react');
 const Modal = require('react-modal');
 const {sources: client} = require('../api/client_helper');
+const {Map, TileLayer, FeatureGroup, Marker} = require('react-leaflet');
+const {EditControl} = require('react-leaflet-draw');
+const update = require('immutability-helper');
 
 class SourceEdit extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {source: this.props.source || {}, isOpen: false};
+        this.state = {
+            source: this.props.source || {priceRange: {}, bounds: {}},
+            isOpen: false
+        };
         this.edit = this.edit.bind(this);
         this.close = this.close.bind(this);
         this.save = this.save.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        this.setState({source: nextProps.source || {}});
+        this.onAreaSelected = this.onAreaSelected.bind(this);
+        this.sourceChangeHandler = this.sourceChangeHandler.bind(this);
     }
 
     edit() {
@@ -32,37 +36,138 @@ class SourceEdit extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        const fields = [].concat(...event.target);
-        const props = fields.filter(field => !!field.name).map(field => {return {[field.name]: field.value || null}});
-        const source = Object.assign({}, ...props);
-        this.save(source);
+        this.save(this.state.source);
+    }
+
+    sourceChangeHandler(path) {
+        return (event) => {
+            const toUpdate = this.setValue({}, path, {$set: event.target.value});
+            this.setState({source: update(this.state.source, toUpdate)});
+        }
+    }
+
+    setValue(obj, path, value) {
+        const fields = path.split('.');
+        const [subPath, field] = [fields.slice(0, fields.length - 1), fields[fields.length - 1]];
+        let target = obj;
+        subPath.forEach(element => {
+            target[element] = {};
+            target = target[element];
+        });
+        target[field] = value;
+
+        return obj;
+    }
+
+    onAreaSelected(bounds) {
+        const updated = {
+            northWestLatitude: bounds.getNorthWest().lat,
+            northWestLongitude: bounds.getNorthWest().lng,
+            southEastLatitude: bounds.getSouthEast().lat,
+            southEastLongitude: bounds.getSouthEast().lng
+        };
+        this.setState({source: update(this.state.source, {bounds: {$set: updated}})});
     }
 
     render() {
         const source = this.state.source;
-        return [
-            <button key={source.name + '_edit'} onClick={this.edit} title={this.props.title} className={this.props.className}>
-                {this.props.children}
-            </button>,
-            <Modal key={source.name + '_popup'} isOpen={this.state.isOpen}>
-                <form onSubmit={this.handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="name">Название</label>
-                        <input defaultValue={source.name} type="text" className="form-control" id="name" name="name"/>
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="url">Ссылка</label>
-                        <textarea defaultValue={source.url} name="url" id="url" cols="30" rows="10" className="form-control"></textarea>
-                    </div>
-                    <div className="btn-toolbar">
-                        <button className="btn btn-default">Сохранить</button>
-                        <button type="button" onClick={this.close} className="btn btn-default">Отмена</button>
-                    </div>
-                </form>
-            </Modal>
-        ]
+        return (
+            <React.Fragment>
+                <button onClick={this.edit} title={this.props.title} className={this.props.className}>
+                    {this.props.children}
+                </button>
+                <Modal isOpen={this.state.isOpen} onRequestClose={this.close}>
+                    <form onSubmit={this.handleSubmit} className="form-horizontal">
+                        <Input name="name" value={source.name} onChange={this.sourceChangeHandler('name')}>Name</Input>
+                        <Input name="price_min" value={source.priceRange.min}
+                               onChange={this.sourceChangeHandler('priceRange.min')}>Price min</Input>
+                        <Input name="price_max" value={source.priceRange.max}
+                               onChange={this.sourceChangeHandler('priceRange.max')}>Price max</Input>
+                        <Select name="price_currency" value={source.priceRange.currency} items={['USD', 'BYN']}
+                                onChange={this.sourceChangeHandler('priceRange.currency')}>Currency</Select>
+                        <Input name="lb_lat" value={source.bounds.northWestLatitude}>North-West latitude</Input>
+                        <Input name="lb_long" value={source.bounds.northWestLongitude}>North-West longitude</Input>
+                        <Input name="rt_lat" value={source.bounds.southEastLatitude}>South-East latitude</Input>
+                        <Input name="rt_long" value={source.bounds.southEastLongitude}>South-East longitude</Input>
+                        <div className="btn-toolbar">
+                            <button className="btn btn-default">Сохранить</button>
+                            <button type="button" onClick={this.close} className="btn btn-default">Отмена</button>
+                        </div>
+                    </form>
+                    <br/>
+                    <MapAreaSelector onSelect={this.onAreaSelected}/>
+                </Modal>
+            </React.Fragment>
+        )
     }
 }
 
-module.exports = SourceEdit;
+class MapAreaSelector extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            lat: 53.90513435188643,
+            lng: 27.553710937500004,
+            zoom: 13,
+            layer: null
+        };
 
+        this._onCreated = this._onCreated.bind(this);
+        this._onDrawStart = this._onDrawStart.bind(this);
+    }
+
+    _onCreated(e) {
+        const layer = e.layer;
+        this.setState({layer}, () => this.props.onSelect(layer.getBounds()));
+    }
+
+    _onDrawStart(e) {
+        if (this.state.layer)
+            this.state.layer.remove();
+    }
+
+    render() {
+        const position = [this.state.lat, this.state.lng];
+        return (
+            <Map center={position} zoom={this.state.zoom}>
+                <TileLayer
+                    attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+                <FeatureGroup>
+                    <EditControl
+                        position='topright'
+                        draw={{polygon: false, circle: false, polyline: false, marker: false, circlemarker: false}}
+                        edit={{edit: false, remove: false}}
+                        onCreated={this._onCreated}
+                        onDrawStart={this._onDrawStart}/>
+                </FeatureGroup>
+            </Map>
+        )
+    }
+}
+
+const Label = (props) => <label htmlFor={props.htmlFor} className="col-sm-2 control-label">{props.children}</label>;
+const Input = (props) => (
+    <div className="form-group">
+        <Label htmlFor={props.name}>{props.children}</Label>
+        <div className="col-sm-10">
+            <input id={props.name} name={props.name} value={props.value || ''} readOnly={!props.onChange}
+                   type="text" className="form-control" onChange={props.onChange}/>
+        </div>
+    </div>
+);
+const Select = (props) => (
+    <div className="form-group">
+        <Label htmlFor={props.name}>{props.children}</Label>
+        <div className="col-sm-10">
+            <select id={props.name} name={props.name} value={props.value || ''}
+                    className="form-control" onChange={props.onChange}>
+                <option></option>
+                {props.items.map(item => <option key={item + '_option'}>{item}</option>)}
+            </select>
+        </div>
+    </div>
+);
+
+
+module.exports = SourceEdit;

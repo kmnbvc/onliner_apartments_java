@@ -48,12 +48,10 @@
 
     module.exports = interceptor({
         request: function (request) {
-            console.log('request ', request);
             spinnerHandlers.show();
             return request;
         },
         response: function (response) {
-            console.log('response ', response);
             spinnerHandlers.hide();
             return response;
         }

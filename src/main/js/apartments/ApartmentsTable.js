@@ -157,7 +157,8 @@ class LocationLink extends React.Component {
         this.close = this.close.bind(this);
     }
 
-    open() {
+    open(event) {
+        event.preventDefault();
         this.setState({isOpen: true})
     }
 
