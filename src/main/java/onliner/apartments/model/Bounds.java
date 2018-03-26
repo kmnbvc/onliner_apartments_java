@@ -1,12 +1,17 @@
 package onliner.apartments.model;
 
 import javax.persistence.Embeddable;
+import javax.validation.constraints.NotNull;
 
 @Embeddable
 public class Bounds {
+    @NotNull
     private Double northWestLatitude;
+    @NotNull
     private Double northWestLongitude;
+    @NotNull
     private Double southEastLatitude;
+    @NotNull
     private Double southEastLongitude;
 
     public Double getNorthWestLatitude() {
@@ -41,8 +46,4 @@ public class Bounds {
         this.southEastLongitude = southEastLongitude;
     }
 
-    public boolean isEmpty() {
-        return northWestLatitude == null || northWestLongitude == null
-                || southEastLatitude == null || southEastLongitude == null;
-    }
 }

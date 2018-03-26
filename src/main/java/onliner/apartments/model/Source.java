@@ -3,6 +3,7 @@ package onliner.apartments.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import java.text.MessageFormat;
 import java.util.Arrays;
 
@@ -21,6 +22,7 @@ public class Source {
     @Embedded
     private PriceRange priceRange;
     @Embedded
+    @Valid
     private Bounds bounds;
 
     public String getName() {
@@ -43,7 +45,7 @@ public class Source {
     }
 
     private String toParams(Bounds bounds) {
-        if (bounds == null || bounds.isEmpty())
+        if (bounds == null)
             return "";
 
         return MessageFormat.format(BOUNDS_PARAMS,
