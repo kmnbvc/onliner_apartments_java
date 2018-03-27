@@ -4,10 +4,12 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.validation.constraints.Min;
 
 @Embeddable
 public class PriceRange {
     @Column(name = "price_min")
+    @Min(1)
     private Integer min;
     @Column(name = "price_max")
     private Integer max;

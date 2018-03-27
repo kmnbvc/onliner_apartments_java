@@ -108,7 +108,7 @@ public class JsonSerializationTest {
         ObjectMapper mapper = new ObjectMapper();
 
         String actual = mapper.writeValueAsString(source);
-        String expected = "{\"name\":\"nameasfsd\",\"active\":false,\"priceRange\":{\"min\":180,\"max\":300,\"currency\":\"USD\"},\"bounds\":{\"northWestLatitude\":53.93258425698772,\"northWestLongitude\":27.66497585746782,\"southEastLatitude\":53.953156370259734,\"southEastLongitude\":27.701652665753826,\"empty\":false},\"url\":\"https://ak.api.onliner.by/search/apartments?price%5Bmin%5D=180&price%5Bmax%5D=300&currency=USD&bounds%5Blb%5D%5Blat%5D=53.93258425698772&bounds%5Blb%5D%5Blong%5D=27.66497585746782&bounds%5Brt%5D%5Blat%5D=53.953156370259734&bounds%5Brt%5D%5Blong%5D=27.701652665753826\"}";
+        String expected = "{\"name\":\"nameasfsd\",\"active\":false,\"priceRange\":{\"min\":180,\"max\":300,\"currency\":\"USD\"},\"bounds\":{\"northWestLatitude\":53.93258425698772,\"northWestLongitude\":27.66497585746782,\"southEastLatitude\":53.953156370259734,\"southEastLongitude\":27.701652665753826},\"url\":\"https://ak.api.onliner.by/search/apartments?price%5Bmin%5D=180&price%5Bmax%5D=300&currency=USD&bounds%5Blb%5D%5Blat%5D=53.93258425698772&bounds%5Blb%5D%5Blong%5D=27.66497585746782&bounds%5Brt%5D%5Blat%5D=53.953156370259734&bounds%5Brt%5D%5Blong%5D=27.701652665753826\"}";
 
         assertEquals(expected, actual);
     }

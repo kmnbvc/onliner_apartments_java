@@ -79,23 +79,27 @@ class SourceEdit extends React.Component {
                 <Modal isOpen={this.state.isOpen} onRequestClose={this.close}>
                     <form onSubmit={this.handleSubmit} className="form-horizontal">
                         <Input name="name" value={source.name} onChange={this.sourceChangeHandler('name')}>Name</Input>
-                        <Input name="price_min" value={source.priceRange.min}
+                        <Input name="price_min" value={source.priceRange.min} type="number" min="1"
                                onChange={this.sourceChangeHandler('priceRange.min')}>Price min</Input>
                         <Input name="price_max" value={source.priceRange.max}
                                onChange={this.sourceChangeHandler('priceRange.max')}>Price max</Input>
                         <Select name="price_currency" value={source.priceRange.currency} items={['USD', 'BYN']}
-                                onChange={this.sourceChangeHandler('priceRange.currency')}>Currency</Select>
-                        <Input name="lb_lat" value={source.bounds.northWestLatitude}>North-West latitude</Input>
-                        <Input name="lb_long" value={source.bounds.northWestLongitude}>North-West longitude</Input>
-                        <Input name="rt_lat" value={source.bounds.southEastLatitude}>South-East latitude</Input>
-                        <Input name="rt_long" value={source.bounds.southEastLongitude}>South-East longitude</Input>
+                               onChange={this.sourceChangeHandler('priceRange.currency')}>Currency</Select>
+                        <Input name="lb_lat" value={source.bounds.northWestLatitude}
+                                onChange={this.sourceChangeHandler('bounds.northWestLatitude')}>North-West latitude</Input>
+                        <Input name="lb_long" value={source.bounds.northWestLongitude} 
+                                onChange={this.sourceChangeHandler('bounds.northWestLongitude')}>North-West longitude</Input>
+                        <Input name="rt_lat" value={source.bounds.southEastLatitude}
+                                onChange={this.sourceChangeHandler('bounds.southEastLatitude')}>South-East latitude</Input>
+                        <Input name="rt_long" value={source.bounds.southEastLongitude}
+                                onChange={this.sourceChangeHandler('bounds.southEastLongitude')}>South-East longitude</Input>
                         <div className="btn-toolbar">
                             <button className="btn btn-default">Сохранить</button>
                             <button type="button" onClick={this.close} className="btn btn-default">Отмена</button>
                         </div>
                     </form>
                     <br/>
-                    <MapAreaSelector onSelect={this.onAreaSelected}/>
+                    <MapAreaSelector onSelect={this.onAreaSelected} source={this.state.source}/>
                 </Modal>
             </React.Fragment>
         )
@@ -106,14 +110,22 @@ class MapAreaSelector extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            lat: 53.90513435188643,
-            lng: 27.553710937500004,
             zoom: 13,
             layer: null
         };
 
         this._onCreated = this._onCreated.bind(this);
         this._onDrawStart = this._onDrawStart.bind(this);
+        this.drawSelectedBounds = this.drawSelectedBounds.bind(this);
+        this.clearSelection = this.clearSelection.bind(this);
+    }
+
+    componentDidMount() {
+        this.drawSelectedBounds(this.props.source.bounds);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.drawSelectedBounds(nextProps.source.bounds);
     }
 
     _onCreated(e) {
@@ -122,14 +134,26 @@ class MapAreaSelector extends React.Component {
     }
 
     _onDrawStart(e) {
+        this.clearSelection();
+    }
+
+    drawSelectedBounds(bounds) {
+        this.clearSelection();
+        const latLng = [[bounds.northWestLatitude || 0, bounds.northWestLongitude || 0],
+                [bounds.southEastLatitude || 0, bounds.southEastLongitude || 0]];
+        const layer = L.rectangle(latLng).addTo(this.map.leafletElement);
+        this.setState({layer});
+    }
+
+    clearSelection() {
         if (this.state.layer)
             this.state.layer.remove();
     }
 
     render() {
-        const position = [this.state.lat, this.state.lng];
+        const center = [53.90513435188643, 27.553710937500004];
         return (
-            <Map center={position} zoom={this.state.zoom}>
+            <Map center={center} zoom={this.state.zoom} ref={map => {this.map = map}}>
                 <TileLayer
                     attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
@@ -151,8 +175,8 @@ const Input = (props) => (
     <div className="form-group">
         <Label htmlFor={props.name}>{props.children}</Label>
         <div className="col-sm-10">
-            <input id={props.name} name={props.name} value={props.value || ''} readOnly={!props.onChange}
-                   type="text" className="form-control" onChange={props.onChange}/>
+            <input id={props.name} name={props.name} value={props.value || ''} readOnly={!props.onChange} required={true}
+                   type={props.type || "text"} className="form-control" onChange={props.onChange} min={props.min}/>
         </div>
     </div>
 );
@@ -160,7 +184,7 @@ const Select = (props) => (
     <div className="form-group">
         <Label htmlFor={props.name}>{props.children}</Label>
         <div className="col-sm-10">
-            <select id={props.name} name={props.name} value={props.value || ''}
+            <select id={props.name} name={props.name} value={props.value || ''} required={true}
                     className="form-control" onChange={props.onChange}>
                 <option></option>
                 {props.items.map(item => <option key={item + '_option'}>{item}</option>)}
