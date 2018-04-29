@@ -56,7 +56,7 @@ public class ApartmentsLoader {
     }
 
     private PageData loadPage(Source source, int page) {
-        String url = source.getUrl() + "&page=" + page;
+        String url = source.getUrl(page);
         return HttpUtil.get(url, PageData.class).setSource(source);
     }
 

@@ -15,11 +15,13 @@ public class Source {
     private static final String URL_ROOT = "https://ak.api.onliner.by/search/apartments?";
     private static final String PRICE_PARAMS = "price%5Bmin%5D={0}&price%5Bmax%5D={1}&currency={2}";
     private static final String BOUNDS_PARAMS = "bounds%5Blb%5D%5Blat%5D={0}&bounds%5Blb%5D%5Blong%5D={1}&bounds%5Brt%5D%5Blat%5D={2}&bounds%5Brt%5D%5Blong%5D={3}";
+    private static final String PAGE_PARAM = "&page=";
 
     @Id
     private String name;
     private Boolean active = Boolean.TRUE;
     @Embedded
+    @Valid
     private PriceRange priceRange;
     @Embedded
     @Valid
@@ -35,6 +37,10 @@ public class Source {
 
     public String getUrl() {
         return URL_ROOT + String.join("&", Arrays.asList(toParams(priceRange), toParams(bounds)));
+    }
+
+    public String getUrl(int page) {
+        return getUrl() + PAGE_PARAM + page;
     }
 
     private String toParams(PriceRange priceRange) {

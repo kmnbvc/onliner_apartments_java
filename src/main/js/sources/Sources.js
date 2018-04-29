@@ -38,7 +38,7 @@ class SourcesTable extends React.Component {
 
     render() {
         const rows = this.state.sources.map(source => (
-            <tr key={source.name}>
+            <tr key={source.name} className={source.active ? '' : 'not-active'}>
                 <td>{source.name}</td>
                 <td>
                     <a href={source.url}>{source.url}</a>
@@ -48,7 +48,7 @@ class SourcesTable extends React.Component {
                         <SourceEdit source={source} onSave={this.loadData} className="btn btn-default btn-sm" title="Edit">
                             <span className="glyphicon glyphicon-pencil"></span>
                         </SourceEdit>
-                        <ToggleStateButton source={source}/>
+                        <ToggleStateButton source={source} onClick={this.loadData}/>
                         <DeleteButton source={source} onClick={this.deleteSource}/>
                     </div>
                 </td>
@@ -73,27 +73,18 @@ class SourcesTable extends React.Component {
     }
 }
 
-class ToggleStateButton extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {source: props.source};
-        this.toggleState = this.toggleState.bind(this);
-    }
+const ToggleStateButton = ({source, onClick}) => {
+    const toggleState = function () {
+        source.active = !source.active;
+        client.update(source).then(onClick);
+    };
 
-    toggleState() {
-        const source = Object.assign({}, this.state.source, {active: !this.state.source.active});
-        client.update(source).then(() => this.setState({source}));
-    }
-
-    render() {
-        const source = this.state.source;
-        return (
-            <button onClick={this.toggleState} className="btn btn-default btn-sm" title={source.active ? 'Disable' : 'Enable'}>
-                <span className={"glyphicon " + (source.active ? "glyphicon-remove" : "glyphicon-ok")}></span>
-            </button>
-        )
-    }
-}
+    return (
+        <button onClick={toggleState} className="btn btn-default btn-sm" title={source.active ? 'Disable' : 'Enable'}>
+            <span className={"glyphicon " + (source.active ? "glyphicon-remove" : "glyphicon-ok")}></span>
+        </button>
+    )
+};
 
 const DeleteButton = ({source, onClick}) => {
     return (
