@@ -78,7 +78,7 @@ class Toolbar extends React.Component {
         }, false);
 
         source.addEventListener('error', (msg) => {
-            console.log(msg);
+            console.error('Error occured during loading details: ' + (msg.data || 'Unknown error.'), msg);
         }, false);
     }
 

@@ -29,7 +29,7 @@ public class ApartmentsSseController {
 
     @RequestMapping(path = "/details", method = RequestMethod.GET)
     public SseEmitter loadDetails() {
-        SseEmitter emitter = new SseEmitter();
+        SseEmitter emitter = new SseEmitter(600000L);
         List<Apartment> active = apartmentsRepository.getActive();
         ExecutorService executor = Executors.newCachedThreadPool();
         CompletableFuture.runAsync(sender(emitter, "total", active.size()), executor)

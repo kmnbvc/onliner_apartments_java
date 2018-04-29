@@ -102,7 +102,7 @@ class ApartmentRow extends React.Component {
 class PhotosViewer extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {isOpen: false, currentImage: 0, apartment: this.props.apartment};
+        this.state = {isOpen: false, currentImage: 0};
         this.open = this.open.bind(this);
         this.close = this.close.bind(this);
         this.showNext = this.showNext.bind(this);
@@ -132,20 +132,23 @@ class PhotosViewer extends React.Component {
     }
 
     render() {
-        const ap = this.state.apartment;
+        const ap = this.props.apartment;
         const images = ap.images.map(img => {return {src: img}});
-        return [
-            <a key={ap.id + '_photos_gallery_link'} onClick={this.open} href='#'>Show</a>,
-            <Lightbox key={ap.id + '_photos_gallery'} isOpen={this.state.isOpen}
-                      images={images}
-                      showThumbnails={true}
-                      onClose={this.close}
-                      currentImage={this.state.currentImage}
-                      onClickNext={this.showNext}
-                      onClickPrev={this.showPrev}
-                      onClickThumbnail={this.gotoImage}
-                      preventScroll={false}/>
-        ]
+        return (
+            images.length > 0 ?
+                <React.Fragment>
+                    <a onClick={this.open} href='#'>Show</a>
+                    <Lightbox isOpen={this.state.isOpen}
+                              images={images}
+                              showThumbnails={true}
+                              onClose={this.close}
+                              currentImage={this.state.currentImage}
+                              onClickNext={this.showNext}
+                              onClickPrev={this.showPrev}
+                              onClickThumbnail={this.gotoImage}
+                              preventScroll={false}/>
+                </React.Fragment> : null
+        )
     }
 }
 
